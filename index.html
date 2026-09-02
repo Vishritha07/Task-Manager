@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="style.css" >
+</head>
+<body>
+    <div class = "main-container">
+        <div class = "header">
+        <h1 >Task Manager</h1>
+        <p>Organize your day</p>
+        </div>
+
+
+        <div class="add-task-section">
+
+          <button class="show-form-btn" id="showFormBtn">
+            + Click to Add New Task
+          </button>
+
+          <div class="task-form" id="taskForm">
+
+            <button class="close-btn" id="closeFormBtn">&times;</button>
+            <label>Title</label>
+            <input type="text" id="taskTitle" placeholder="Enter task title">
+
+            <label>Description</label>
+            <textarea id="taskDescription" placeholder="Enter task description"></textarea>
+
+            <label>Start Date</label>
+            <input type="date" id="startDate">
+
+            <label>End Date</label>
+            <input type="date" id="endDate">
+
+            <button class="save-task-btn" id="saveTaskBtn">Save Task</button>
+
+        </div>
+
+
+
+        <div class="task-list">
+
+         <h2>My Tasks</h2>
+
+         <div class="table-container">
+             <table>
+                 <thead>
+                     <tr>
+                         <th>#</th>
+                         <th>Title</th>
+                         <th>Description</th>
+                         <th>Start Date</th>
+                         <th>End Date</th>
+                         <th>Status</th>
+                         <th>Actions</th>
+                     </tr>
+                 </thead>
+
+                 <tbody id="taskTableBody">
+                     <!-- JavaScript will add tasks here -->
+                 </tbody>
+             </table>
+            </div>
+        </div>
+
+    </div>
+        
+        
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
