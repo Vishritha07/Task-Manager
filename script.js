@@ -91,3 +91,60 @@ const savedTask = await response.json();
     endDate.value = "";
 
 });
+
+
+async function loadTasks() {
+    console.log("loadTasks is running");
+    const response = await fetch("http://localhost:3000/tasks");
+    const tasks = await response.json();
+
+    taskTableBody.innerHTML = "";
+
+tasks.forEach(task => {
+    const row = document.createElement("tr");
+
+    const numberCell = document.createElement("td");
+    numberCell.textContent = taskTableBody.children.length + 1;
+    row.appendChild(numberCell);
+
+    const titleCell = document.createElement("td");
+    titleCell.textContent = task.title;
+    row.appendChild(titleCell);
+
+    const descriptionCell = document.createElement("td");
+    descriptionCell.textContent = task.description;
+    row.appendChild(descriptionCell);
+
+    const startCell = document.createElement("td");
+    startCell.textContent = task.startDate;
+    row.appendChild(startCell);
+
+    const endCell = document.createElement("td");
+    endCell.textContent = task.endDate;
+    row.appendChild(endCell);
+
+    const statusCell = document.createElement("td");
+    statusCell.textContent = task.completed ? "Completed" : "Pending";
+    row.appendChild(statusCell);
+
+    const actionCell = document.createElement("td");
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+
+    deleteButton.addEventListener("click", async function () {
+        await fetch(`http://localhost:3000/tasks/${task._id}`, {
+            method: "DELETE"
+        });
+
+        row.remove();
+    });
+
+    actionCell.appendChild(deleteButton);
+    row.appendChild(actionCell);
+
+    taskTableBody.appendChild(row);
+});
+}
+
+loadTasks();
