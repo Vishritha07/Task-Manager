@@ -22,7 +22,7 @@ const taskSchema = new mongoose.Schema({
     description: String,
     startDate: String,
     endDate: String,
-    completed: Boolean
+    completed: String
 });
 
 const Task = mongoose.model("Task", taskSchema);
@@ -55,6 +55,20 @@ app.delete("/tasks/:id", async (req, res) => {
     try {
         await Task.findByIdAndDelete(req.params.id);
         res.json({ message: "Task deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put("/tasks/:id", async (req, res) => {
+    try {
+        const task = await Task.findByIdAndUpdate(
+            req.params.id,
+            { completed: req.body.completed },
+            { new: true }
+        );
+
+        res.json(task);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

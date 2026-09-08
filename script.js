@@ -21,75 +21,77 @@ const startDate = document.getElementById("startDate");
 const endDate = document.getElementById("endDate");
 
 
-saveTaskBtn.addEventListener("click",async function () {
+saveTaskBtn.addEventListener("click", async function () {
 
-    // Get values from the form
     const title = taskTitle.value;
     const description = taskDescription.value;
     const start = startDate.value;
     const end = endDate.value;
 
-    // Check whether required fields are filled
     if (title === "" || description === "" || start === "" || end === "") {
         alert("Please fill all the fields");
         return;
     }
 
-    // Create a new table row
-    const response = await fetch("http://localhost:3000/tasks", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        title: title,
-        description: description,
-        startDate: start,
-        endDate: end,
-        completed: false
-    })
-});
+    try {
+        const response = await fetch("http://localhost:3000/tasks", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                title: title,
+                description: description,
+                startDate: start,
+                endDate: end,
+                 status: "Pending"
+            })
+        });
 
-const savedTask = await response.json();
-    const row = document.createElement("tr");
+        if (!response.ok) {
+            throw new Error("Failed to save task");
+        }
 
-    // Create table cells
-    const numberCell = document.createElement("td");
-    const titleCell = document.createElement("td");
-    const descriptionCell = document.createElement("td");
-    const startCell = document.createElement("td");
-    const endCell = document.createElement("td");
-    const statusCell = document.createElement("td");
-    const actionCell = document.createElement("td");
+        const savedTask = await response.json();
 
-    // Put values into cells
-    numberCell.textContent = taskTableBody.children.length + 1;
-    titleCell.textContent = title;
-    descriptionCell.textContent = description;
-    startCell.textContent = start;
-    endCell.textContent = end;
+        const row = document.createElement("tr");
 
-    // Status
-    statusCell.textContent = "Pending";
+        const numberCell = document.createElement("td");
+        const titleCell = document.createElement("td");
+        const descriptionCell = document.createElement("td");
+        const startCell = document.createElement("td");
+        const endCell = document.createElement("td");
+        const statusCell = document.createElement("td");
+        const actionCell = document.createElement("td");
 
-    // Add cells to row
-    row.appendChild(numberCell);
-    row.appendChild(titleCell);
-    row.appendChild(descriptionCell);
-    row.appendChild(startCell);
-    row.appendChild(endCell);
-    row.appendChild(statusCell);
-    row.appendChild(actionCell);
+        numberCell.textContent = taskTableBody.children.length + 1;
+        titleCell.textContent = savedTask.title;
+        descriptionCell.textContent = savedTask.description;
+        startCell.textContent = savedTask.startDate;
+        endCell.textContent = savedTask.endDate;
+        statusCell.textContent = "Pending";
 
-    // Add row to table
-    taskTableBody.appendChild(row);
+        row.appendChild(numberCell);
+        row.appendChild(titleCell);
+        row.appendChild(descriptionCell);
+        row.appendChild(startCell);
+        row.appendChild(endCell);
+        row.appendChild(statusCell);
+        row.appendChild(actionCell);
 
-    // Clear form
-    taskTitle.value = "";
-    taskDescription.value = "";
-    startDate.value = "";
-    endDate.value = "";
+        taskTableBody.appendChild(row);
 
+        taskTitle.value = "";
+        taskDescription.value = "";
+        startDate.value = "";
+        endDate.value = "";
+
+        alert("Task saved successfully!");
+
+    } catch (error) {
+        console.error("Error saving task:", error);
+        alert("Could not save task. Make sure the backend server is running.");
+    }
 });
 
 
@@ -124,7 +126,53 @@ tasks.forEach(task => {
     row.appendChild(endCell);
 
     const statusCell = document.createElement("td");
-    statusCell.textContent = task.completed ? "Completed" : "Pending";
+
+    const statusText = document.createElement("span");
+    statusText.textContent = task.status || "Pending";
+
+    const changeButton = document.createElement("button");
+changeButton.textContent = "Change";
+
+changeButton.addEventListener("click", function () {
+
+    const statusMenu = document.createElement("select");
+
+    const options = [
+        "Pending",
+        "Started",
+        "Paused",
+        "Completed"
+    ];
+
+    options.forEach(option => {
+        const optionElement = document.createElement("option");
+        optionElement.value = option;
+        optionElement.textContent = option;
+
+        if (option === task.status) {
+            optionElement.selected = true;
+        }
+
+        statusMenu.appendChild(optionElement);
+    });
+
+    statusCell.innerHTML = "";
+    statusCell.appendChild(statusMenu);
+
+    statusMenu.addEventListener("change", function () {
+
+        const selectedStatus = statusMenu.value;
+
+        statusText.textContent = selectedStatus;
+
+        statusCell.innerHTML = "";
+        statusCell.appendChild(statusText);
+        statusCell.appendChild(changeButton);
+    });
+});
+
+statusCell.appendChild(statusText);
+    statusCell.appendChild(changeButton);
     row.appendChild(statusCell);
 
     const actionCell = document.createElement("td");
