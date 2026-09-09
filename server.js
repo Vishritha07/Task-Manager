@@ -22,7 +22,7 @@ const taskSchema = new mongoose.Schema({
     description: String,
     startDate: String,
     endDate: String,
-    completed: String
+    status: String
 });
 
 const Task = mongoose.model("Task", taskSchema);
@@ -64,7 +64,7 @@ app.put("/tasks/:id", async (req, res) => {
     try {
         const task = await Task.findByIdAndUpdate(
             req.params.id,
-            { completed: req.body.completed },
+            { status: req.body.status },
             { new: true }
         );
 

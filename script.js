@@ -159,16 +159,39 @@ changeButton.addEventListener("click", function () {
     statusCell.innerHTML = "";
     statusCell.appendChild(statusMenu);
 
-    statusMenu.addEventListener("change", function () {
+    statusMenu.addEventListener("change", async function () {
 
-        const selectedStatus = statusMenu.value;
+    const selectedStatus = statusMenu.value;
 
+    try {
+        const response = await fetch(`http://localhost:3000/tasks/${task._id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                status: selectedStatus
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to update status");
+        }
+
+        task.status = selectedStatus;
         statusText.textContent = selectedStatus;
 
         statusCell.innerHTML = "";
         statusCell.appendChild(statusText);
         statusCell.appendChild(changeButton);
-    });
+
+        alert("Status updated successfully!");
+
+    } catch (error) {
+        console.error("Error updating status:", error);
+        alert("Could not update status.");
+    }
+});
 });
 
 statusCell.appendChild(statusText);
