@@ -86,6 +86,10 @@ saveTaskBtn.addEventListener("click", async function () {
         startDate.value = "";
         endDate.value = "";
 
+        taskForm.style.display = "none";
+
+        await loadTasks();
+
         alert("Task saved successfully!");
 
     } catch (error) {
