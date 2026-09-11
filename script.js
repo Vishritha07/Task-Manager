@@ -135,9 +135,10 @@ tasks.forEach(task => {
     statusText.textContent = task.status || "Pending";
 
     const changeButton = document.createElement("button");
-changeButton.textContent = "Change";
+    changeButton.textContent = "Change";
+    changeButton.classList.add("status-btn");
 
-changeButton.addEventListener("click", function () {
+    changeButton.addEventListener("click", function () {
 
     const statusMenu = document.createElement("select");
 
@@ -186,6 +187,7 @@ changeButton.addEventListener("click", function () {
         statusText.textContent = selectedStatus;
 
         statusCell.innerHTML = "";
+        
         statusCell.appendChild(statusText);
         statusCell.appendChild(changeButton);
 
@@ -197,6 +199,7 @@ changeButton.addEventListener("click", function () {
     }
 });
 });
+statusText.style.marginRight = "10px";
 
 statusCell.appendChild(statusText);
     statusCell.appendChild(changeButton);
@@ -206,6 +209,7 @@ statusCell.appendChild(statusText);
 
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
+    deleteButton.classList.add("delete-btn");
 
     deleteButton.addEventListener("click", async function () {
         await fetch(`http://localhost:3000/tasks/${task._id}`, {
