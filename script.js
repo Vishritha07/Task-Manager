@@ -106,48 +106,89 @@ async function loadTasks() {
 
     taskTableBody.innerHTML = "";
 
-tasks.forEach(task => {
-    const row = document.createElement("tr");
+    function updateTaskNumbers() {
+        const rows = taskTableBody.children;
 
-    const numberCell = document.createElement("td");
-    numberCell.textContent = taskTableBody.children.length + 1;
-    row.appendChild(numberCell);
+        for (let i = 0; i < rows.length; i++) {
+            rows[i].children[0].textContent = i + 1;
+        }
+    }
 
-    const titleCell = document.createElement("td");
-    titleCell.textContent = task.title;
-    row.appendChild(titleCell);
+    async function saveTaskOrder() {
+    const rows = taskTableBody.children;
 
-    const descriptionCell = document.createElement("td");
-    descriptionCell.textContent = task.description;
-    row.appendChild(descriptionCell);
+    const taskOrder = [];
 
-    const startCell = document.createElement("td");
-    startCell.textContent = task.startDate;
-    row.appendChild(startCell);
+    for (let i = 0; i < rows.length; i++) {
+        taskOrder.push({
+            id: rows[i].dataset.taskId,
+            order: i + 1
+        });
+    }
 
-    const endCell = document.createElement("td");
-    endCell.textContent = task.endDate;
-    row.appendChild(endCell);
+    try {
+        const response = await fetch("http://localhost:3000/tasks/reorder", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(taskOrder)
+        });
 
-    const statusCell = document.createElement("td");
+        if (!response.ok) {
+            throw new Error("Failed to save task order");
+        }
 
-    const statusText = document.createElement("span");
-    statusText.textContent = task.status || "Pending";
+        console.log("Task order saved successfully");
 
-    const changeButton = document.createElement("button");
-    changeButton.textContent = "Change";
-    changeButton.classList.add("status-btn");
+    } catch (error) {
+        console.error("Error saving task order:", error);
+    }
+}
 
-    changeButton.addEventListener("click", function () {
+    tasks.forEach(task => {
+        const row = document.createElement("tr");
+        row.dataset.taskId = task._id;
 
-    const statusMenu = document.createElement("select");
+        const numberCell = document.createElement("td");
+        numberCell.textContent = taskTableBody.children.length + 1;
+        row.appendChild(numberCell);
 
-    const options = [
-        "Pending",
-        "Started",
-        "Paused",
-        "Completed"
-    ];
+        const titleCell = document.createElement("td");
+        titleCell.textContent = task.title;
+        row.appendChild(titleCell);
+
+        const descriptionCell = document.createElement("td");
+        descriptionCell.textContent = task.description;
+        row.appendChild(descriptionCell);
+
+        const startCell = document.createElement("td");
+        startCell.textContent = task.startDate;
+        row.appendChild(startCell);
+
+        const endCell = document.createElement("td");
+        endCell.textContent = task.endDate;
+        row.appendChild(endCell);
+
+        const statusCell = document.createElement("td");
+
+        const statusText = document.createElement("span");
+        statusText.textContent = task.status || "Pending";
+
+        const changeButton = document.createElement("button");
+        changeButton.textContent = "Change";
+        changeButton.classList.add("status-btn");
+
+        changeButton.addEventListener("click", function () {
+
+        const statusMenu = document.createElement("select");
+
+        const options = [
+            "Pending",
+            "Started",
+            "Paused",
+            "Completed"
+        ];
 
     options.forEach(option => {
         const optionElement = document.createElement("option");
@@ -207,9 +248,46 @@ statusCell.appendChild(statusText);
 
     const actionCell = document.createElement("td");
 
+    const upButton = document.createElement("button");
+    upButton.textContent = "↑";
+    upButton.classList.add("status-btn");
+
+    const downButton = document.createElement("button");
+    downButton.textContent = "↓";
+    downButton.classList.add("status-btn");
+
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.classList.add("delete-btn");
+
+    actionCell.appendChild(upButton);
+    actionCell.appendChild(downButton);
+    actionCell.appendChild(deleteButton);
+
+    upButton.addEventListener("click", async  function () {
+        const previousRow = row.previousElementSibling;
+
+        if (previousRow) {
+            taskTableBody.insertBefore(row, previousRow);
+            updateTaskNumbers();
+            await saveTaskOrder();
+        }
+    });
+
+    downButton.addEventListener("click", async  function () {
+        const nextRow = row.nextElementSibling;
+
+        if (nextRow) {
+            taskTableBody.insertBefore(nextRow, row);
+            updateTaskNumbers();
+            await saveTaskOrder();
+        }
+    });
+
+
+    row.appendChild(actionCell);
+
+
 
     deleteButton.addEventListener("click", async function () {
         await fetch(`http://localhost:3000/tasks/${task._id}`, {
@@ -218,10 +296,6 @@ statusCell.appendChild(statusText);
 
         row.remove();
     });
-
-    actionCell.appendChild(deleteButton);
-    row.appendChild(actionCell);
-
     taskTableBody.appendChild(row);
 });
 }

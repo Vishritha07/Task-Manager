@@ -22,7 +22,8 @@ const taskSchema = new mongoose.Schema({
     description: String,
     startDate: String,
     endDate: String,
-    status: String
+    status: String,
+    order: Number
 });
 
 const Task = mongoose.model("Task", taskSchema);
@@ -44,7 +45,7 @@ app.post("/tasks", async (req, res) => {
 
 app.get("/tasks", async (req, res) => {
     try {
-        const tasks = await Task.find();
+        const tasks = await Task.find().sort({ order: 1 });
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -60,6 +61,23 @@ app.delete("/tasks/:id", async (req, res) => {
     }
 });
 
+app.put("/tasks/reorder", async (req, res) => {
+    try {
+        const tasks = req.body;
+
+        for (const task of tasks) {
+            await Task.findByIdAndUpdate(
+                task.id,
+                { order: task.order }
+            );
+        }
+
+        res.json({ message: "Task order updated successfully" });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 app.put("/tasks/:id", async (req, res) => {
     try {
         const task = await Task.findByIdAndUpdate(
