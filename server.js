@@ -1,5 +1,11 @@
-const express = require("express");
+require("dotenv").config();
 const mongoose = require("mongoose");
+
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Atlas connected"))
+  .catch(err => console.log(err));
+  
+const express = require("express");
 const cors = require("cors");
 
 const app = express();
@@ -9,13 +15,6 @@ app.use(express.json());
 
 console.log("Backend server file is working");
 
-mongoose.connect("mongodb://127.0.0.1:27017/taskmanager")
-    .then(() => {
-        console.log("MongoDB connected successfully");
-    })
-    .catch((error) => {
-        console.log("MongoDB connection error:", error);
-    });
 
 const taskSchema = new mongoose.Schema({
     title: String,
