@@ -34,7 +34,7 @@ saveTaskBtn.addEventListener("click", async function () {
     }
 
     try {
-        const response = await fetch("http://localhost:3000/tasks", {
+        const response = await fetch("/tasks", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -101,7 +101,7 @@ saveTaskBtn.addEventListener("click", async function () {
 
 async function loadTasks() {
     console.log("loadTasks is running");
-    const response = await fetch("http://localhost:3000/tasks");
+    const response = await fetch("/tasks");
     const tasks = await response.json();
 
     taskTableBody.innerHTML = "";
@@ -127,7 +127,7 @@ async function loadTasks() {
     }
 
     try {
-        const response = await fetch("http://localhost:3000/tasks/reorder", {
+        const response = await fetch("/tasks/reorder", {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -210,7 +210,7 @@ async function loadTasks() {
     const selectedStatus = statusMenu.value;
 
     try {
-        const response = await fetch(`http://localhost:3000/tasks/${task._id}`, {
+        const response = await fetch(`/tasks/${task._id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -290,7 +290,7 @@ statusCell.appendChild(statusText);
 
 
     deleteButton.addEventListener("click", async function () {
-        await fetch(`http://localhost:3000/tasks/${task._id}`, {
+        await fetch(`/tasks/${task._id}`, {
             method: "DELETE"
         });
 
