@@ -1,3 +1,9 @@
+const API_URL =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+        ? "http://localhost:3000"
+        : "";
+        
 const showFormBtn = document.getElementById("showFormBtn");
 const taskForm = document.getElementById("taskForm");
 
@@ -34,7 +40,7 @@ saveTaskBtn.addEventListener("click", async function () {
     }
 
     try {
-        const response = await fetch("/tasks", {
+        const response = await fetch(`${API_URL}/tasks`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -101,7 +107,7 @@ saveTaskBtn.addEventListener("click", async function () {
 
 async function loadTasks() {
     console.log("loadTasks is running");
-    const response = await fetch("/tasks");
+    const response = await fetch(`${API_URL}/tasks`);
     const tasks = await response.json();
 
     taskTableBody.innerHTML = "";
@@ -127,7 +133,7 @@ async function loadTasks() {
     }
 
     try {
-        const response = await fetch("/tasks/reorder", {
+        const response = await fetch(`${API_URL}/tasks/reorder`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -210,7 +216,7 @@ async function loadTasks() {
     const selectedStatus = statusMenu.value;
 
     try {
-        const response = await fetch(`/tasks/${task._id}`, {
+        const response = await fetch(`${API_URL}/tasks/${task._id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -290,7 +296,7 @@ statusCell.appendChild(statusText);
 
 
     deleteButton.addEventListener("click", async function () {
-        await fetch(`/tasks/${task._id}`, {
+        await fetch(`${API_URL}/tasks/${task._id}`, {
             method: "DELETE"
         });
 
