@@ -9,6 +9,7 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
+app.use(express.static(__dirname));
 app.use(cors());
 
 app.use(express.json());
@@ -28,7 +29,7 @@ const taskSchema = new mongoose.Schema({
 const Task = mongoose.model("Task", taskSchema);
 
 app.get("/", (req, res) => {
-    res.send("Task Manager Backend is running!");
+    res.send(__dirname + "/index.html");
 });
 
 app.post("/tasks", async (req, res) => {
@@ -91,6 +92,8 @@ app.put("/tasks/:id", async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log("Server running on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
